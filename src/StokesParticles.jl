@@ -1,5 +1,7 @@
 module StokesParticles
 
+using BenchmarkTools 
+
 include("ParticleTypes.jl")
 include("CellLists.jl")
 include("fgt.jl")
