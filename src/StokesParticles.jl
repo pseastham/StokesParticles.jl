@@ -1,10 +1,10 @@
 module StokesParticles
 
-include("part/ParticleTypes.jl")
-include("part/CellLists.jl")
-include("part/fgt.jl")
-include("part/UpdateParticles.jl")
-include("part/AdhesionForce.jl")
+include("ParticleTypes.jl")
+include("CellLists.jl")
+include("fgt.jl")
+include("UpdateParticles.jl")
+include("AdhesionForce.jl")
 
 export AbstractWall, NearestPoint, generateQuadNodes!,isInLine
 
