@@ -19,7 +19,10 @@ export femGenerateMap,
        updateCellList!
 
 # fgt.jl
-export interpFGT!
+export interpFGT!,
+fgt!,
+dgt!,
+mydgt!
 
 # ParticleTypes.jl
 export Point2D,
