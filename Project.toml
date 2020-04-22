@@ -10,7 +10,7 @@ figtree_jll = "eeb7bb4a-9a32-53d0-9978-007222276d6f"
 
 [compat]
 julia = "1.3.1"
-figtree_jll = "^0.1"
+figtree_jll = "1.1.0+0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
