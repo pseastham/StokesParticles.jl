@@ -19,5 +19,4 @@ t2 = @elapsed dgt!(v2,d,M,N,h,ε,x,y,q,W)
 t3 = @elapsed mydgt!(v3,d,M,N,h,ε,x,y,q,W)
 
 @test t1 < t2 < t3
-@test norm(v1 - v2) < eps()
-@test norm(v1 - v3) < eps()
+@test norm(v2 - v3)/norm(v3) < eps()
