@@ -3,7 +3,7 @@ import LinearAlgebra: norm
 
 d = 2                           # dimension of data
 M = 1_000                       # number of targets 
-N = 2                           # number of sources
+N = 1_000                       # number of sources
 h = 0.8                         # bandwidth
 ε = 1e-2                        # max tolerance
 x = rand(N*d)                   # source vectors, reshape'd to 1D array
