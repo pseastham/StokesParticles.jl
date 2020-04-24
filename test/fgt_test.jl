@@ -18,8 +18,8 @@ v3 = zeros(M)                   # output 3
 fgt!(v1,d,M,N,h,ε,x,y,q,W)
 dgt!(v1,d,M,N,h,ε,x,y,q,W)
 
-t1 = @time fgt!(v1,d,M,N,h,ε,x,y,q,W)        # fast c++
-t2 = @time dgt!(v2,d,M,N,h,ε,x,y,q,W)        # slow c++
+t1 = @elapsed fgt!(v1,d,M,N,h,ε,x,y,q,W)        # fast c++
+t2 = @elapsed dgt!(v2,d,M,N,h,ε,x,y,q,W)        # slow c++
 
 @test t1 < t2
 @test norm(v1-v2) < eps()
