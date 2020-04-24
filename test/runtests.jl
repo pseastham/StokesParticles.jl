@@ -1,6 +1,5 @@
-using StokesParticles
-using Test
+using SafeTestsets
 
-@testset "StokesParticles.jl" begin
-    # Write your own tests here.
+@time begin
+    @time @safetestset "FIGTree Tests" begin include("fgt_test.jl") end
 end
