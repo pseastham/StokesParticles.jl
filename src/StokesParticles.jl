@@ -10,6 +10,7 @@ using figtree_jll
 include("fgt.jl")
 include("UpdateParticles.jl")
 include("AdhesionForce.jl")
+include("CohesionForce.jl")
 
 export AbstractWall, NearestPoint, generateQuadNodes!,isInLine
 
