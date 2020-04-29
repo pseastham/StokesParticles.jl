@@ -1,19 +1,19 @@
 abstract type AbstractWall end
 abstract type AbstractParticle end
 
-mutable struct Point{T}
+mutable struct Point2D{T}
     x::T
     y::T
 end
 
 struct Particle{T} <: AbstractParticle
-    p::Point{T}
+    p::Point2D{T}
     radius::T
     density::T
 end
 
 struct LineWall{T} <: AbstractWall
-    nodes::Vector{Point{T}}       # 2 points, defining start and end
+    nodes::Vector{Point2D{T}}       # 2 points, defining start and end
     n::Vector{T}                  # normal unit vector of wall
     t::Vector{T}                  # tangent unit vector of wall
     orientation::Symbol           # can be :right, :left, or :both to determine 
@@ -24,7 +24,7 @@ end                               #     on which side of the circle the domain
                                   #     :left is opposite, and :both is both.
 
 struct CircleWall{T} <: AbstractWall
-    center::Point{T}        # point that defines center
+    center::Point2D{T}        # point that defines center
     radius::T                 # radius of circle
     orientation::Symbol       # can be :inward, :outward, or :both to determine 
 end                           #     on which side of the circle the domain
@@ -33,7 +33,7 @@ end                           #     on which side of the circle the domain
                               #     of circle
 
 struct ArcWall{T} <: AbstractWall
-    nodes::Vector{Point{T}}     # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
+    nodes::Vector{Point2D{T}}     # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
     orientation::Symbol           # can be :inward, :outward, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
