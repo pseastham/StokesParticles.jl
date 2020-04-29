@@ -1,19 +1,21 @@
-# Defines new types to be used in particle simulations
-
-# ==============================================================================
-# TYPE DEFINITIONS
-# ==============================================================================
 abstract type AbstractWall end
+abstract type AbstractParticle end
 
-mutable struct Point2D{T}
+mutable struct Point{T}
     x::T
     y::T
 end
 
-mutable struct LineWall{T} <: AbstractWall
-    nodes::Vector{Point2D{T}}        # 2 points, defining start and end
-    n::Vector{T}            # normal unit vector of wall
-    t::Vector{T}            # tangent unit vector of wall
+struct Particle{T} <: AbstractParticle
+    p::Point{T}
+    radius::T
+    density::T
+end
+
+struct LineWall{T} <: AbstractWall
+    nodes::Vector{Point{T}}       # 2 points, defining start and end
+    n::Vector{T}                  # normal unit vector of wall
+    t::Vector{T}                  # tangent unit vector of wall
     orientation::Symbol           # can be :right, :left, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
@@ -21,26 +23,22 @@ end                               #     on which side of the circle the domain
                                   #     right if standing on start and looking at end. 
                                   #     :left is opposite, and :both is both.
 
-mutable struct CircleWall{T} <: AbstractWall
-    center::Point2D{T}               # point that defines center
-    radius::T               # radius of circle
+struct CircleWall{T} <: AbstractWall
+    center::Point{T}        # point that defines center
+    radius::T                 # radius of circle
+    orientation::Symbol       # can be :inward, :outward, or :both to determine 
+end                           #     on which side of the circle the domain
+                              #     of the problem is. Helpful when computing
+                              #     interacting forces. :inward is towards center
+                              #     of circle
+
+struct ArcWall{T} <: AbstractWall
+    nodes::Vector{Point{T}}     # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
     orientation::Symbol           # can be :inward, :outward, or :both to determine 
 end                               #     on which side of the circle the domain
                                   #     of the problem is. Helpful when computing
                                   #     interacting forces. :inward is towards center
                                   #     of circle
-
-mutable struct ArcWall{T} <: AbstractWall
-    nodes::Vector{Point2D{T}}        # 3 nodes, 1) start, 2) center, and 3) end going CCW (counterclockwise)
-    orientation::Symbol           # can be :inward, :outward, or :both to determine 
-end                               #     on which side of the circle the domain
-                                  #     of the problem is. Helpful when computing
-                                  #     interacting forces. :inward is towards center
-                                  #     of circle
-
-# ==============================================================================
-# INITIALIZATION DEFINITIONS
-# ==============================================================================
 
 # initializes new wall defined by 2 points (Start,End)
 function LineWall(nodes::Vector{Point2D{T}},orientation::Symbol) where T<:Real

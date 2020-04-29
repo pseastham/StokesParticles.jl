@@ -1,23 +1,18 @@
 # computes cohesion forces
 
-include("CellLists.jl")  # loads in Point2D type
+"""
+    LJForceMagnitude(r,s,d,ϵ)
 
-# Returns -d/dr V(r) where V(r) is the lennard-jones potential
-# ϵ: strength
-# d: equilibrium distance
-# r: distance between particles
-# rc: cutoff distance as multiple of d 
-function LennardJonesForceMagnitude(ϵ::T,d::T,r::T,rc::T) where T<:Real
-    if r > rc*d
-        return zero(T)
-    else
-        d2 = d*d
-        r2 = r*r
-        dr = d*r
-        return -12*ϵ*d^6*(d-r)*(d+r)*(d2 + r2 + dr)*(d2 + r2 - dr)/r^13
-    end
+Returns magnitude of force resulting from Lennard-Jones-type potential.
+r is the distance between particles, s is a scale parameter for the 
+strength of interaction, d is the equilibrium distance between particles,
+and ϵ is the interaction extension, typically a small positive number. 
+"""
+function LJForceMagnitude(r::T,s::T,d::T,ϵ::T) where T<:Real
+    return ( r > (1+ϵ)*d ? zero(T) : 2*s*d/r^2*(1 - d/r) )
 end
 
+"""
 function ForceCalculation(ϵ::T,d::T,rc::T,Δx::T,Δy::T) where T<:Real
     len = sqrt(Δx*Δx + Δy*Δy)
     tx=Δx/len; ty=Δy/len
@@ -103,3 +98,4 @@ function computeCohesion_CL!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Poin
 
     nothing
 end
+"""
