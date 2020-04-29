@@ -9,7 +9,7 @@ strength of interaction, d is the equilibrium distance between particles,
 and ϵ is the interaction extension, typically a small positive number. 
 """
 function LJForceMagnitude(r::T,s::T,d::T,ϵ::T) where T<:Real
-    return ( r > (1+ϵ)*d ? zero(T) : 2*s*d/r^2*(1 - d/r) )
+    return ( r > (1+ϵ)*d ? zero(T) : 2*s*d/r^2*(d/r - one(T)) )
 end
 
 """
