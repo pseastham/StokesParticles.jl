@@ -1,27 +1,15 @@
-# Generates and updates cell list object, and generates mapping for
-# finite element mesh elements to a corresponding cell list cells
-
-#include("ParticleTypes.jl")  # to load in Point2D type
-
-# -----------------
-# TYPE DEFINITIONS
-# -----------------
 
 mutable struct Cell
-  nodeList::Vector{Int}           # list of indices of particles that are within cell
-  square::Vector{Float64}         # bounding square that defined geometry and position of cell
+  particleIDList::Vector{Int}     # list of indices of particles that are within cell
+  square::Vector{Float64}         # bounding square that defines position of cell
   neighborList::Vector{Int}       # list of cell neighbors, used for fast access
 end
 
-mutable struct CellList
+struct CellList
   cells::Vector{Cell}             # array of cells -- this is main component
   bounds::Vector{Float64}         # total bounds of cell list in [x0, x1, y0, y1] format
   sideLength::Float64             # length of one cell inside cell list
 end
-
-# ------------
-# CONSTRUCTOR
-# ------------
 
 """
   generateCellList(nodeList,square,L)
@@ -36,11 +24,15 @@ L
 OUTPUT
 cl
 """
-function generateCellList(nodeList::Vector{Point2D{T}},totalBounds::Vector{Float64},L::Float64) where T<:Real
+function generateCellList(particleList::Vector{P},totalBounds::Vector{T},L::T) where {T<:Real,P<:AbstractParticle}
+  if !(P <: Particle2D)
+    error("cell lists aren't yet written to support 3D. Your points are of type $(P)")
+  end
+
   X0=totalBounds[1]; X1=totalBounds[2]; Y0=totalBounds[3]; Y1=totalBounds[4]
   Nx = Int(ceil((X1 - X0)/L))
   Ny = Int(ceil((Y1 - Y0)/L))
-  nNodes = length(nodeList)
+  n_nodes = length(particleList)
 
   neighborMat = zeros(Int,8)
   cl = CellList(Array{Cell}(undef,Nx*Ny),totalBounds,L)
@@ -59,22 +51,14 @@ function generateCellList(nodeList::Vector{Point2D{T}},totalBounds::Vector{Float
     x0 = X0 + i*L; x1 = X0 + (i+1)*L; y0 = Y1-j*L; y1 = Y1-(j-1)*L
 
     # compute neighbors
-    # left
-    if i>0 neighborMat[matInd] = (i-1)*Nx+j; matInd+=1 end
-    # top
-    if j>1 neighborMat[matInd] = i*Nx+j-1; matInd+=1 end
-    # right
-    if i<(Nx-1) neighborMat[matInd] = (i+1)*Nx+j; matInd+=1 end
-    # bottom
-    if j<Ny neighborMat[matInd] = i*Nx+j+1; matInd+=1 end
-    # top-right
-    if (j>1 && i<(Nx-1)) neighborMat[matInd] = (i+1)*Nx+j-1; matInd+=1 end
-    # top-left
-    if (j>1 && i>0) neighborMat[matInd] =(i-1)*Nx+j-1; matInd+=1 end
-    # bottom-right
-    if (j<Ny && i<(Nx-1)) neighborMat[matInd] = (i+1)*Nx+j+1; matInd+=1 end
-    # bottom-left
-    if (j<Ny && i>0) neighborMat[matInd] = (i-1)*Nx+j+1; matInd+=1 end
+    if i>0 neighborMat[matInd] = (i-1)*Nx+j; matInd+=1 end                  # left
+    if j>1 neighborMat[matInd] = i*Nx+j-1; matInd+=1 end                    # top
+    if i<(Nx-1) neighborMat[matInd] = (i+1)*Nx+j; matInd+=1 end             # right
+    if j<Ny neighborMat[matInd] = i*Nx+j+1; matInd+=1 end                   # bottom
+    if (j>1 && i<(Nx-1)) neighborMat[matInd] = (i+1)*Nx+j-1; matInd+=1 end  # top-right
+    if (j>1 && i>0) neighborMat[matInd] =(i-1)*Nx+j-1; matInd+=1 end        # top-left
+    if (j<Ny && i<(Nx-1)) neighborMat[matInd] = (i+1)*Nx+j+1; matInd+=1 end # bottom-right
+    if (j<Ny && i>0) neighborMat[matInd] = (i-1)*Nx+j+1; matInd+=1 end      # bottom-left
 
     # generate cell
     cl.cells[k] = Cell(copy(tempZeroArr),[x0,x1,y0,y1],neighborMat[1:(matInd-1)])
@@ -82,10 +66,10 @@ function generateCellList(nodeList::Vector{Point2D{T}},totalBounds::Vector{Float
   end
 
   # assign nodes to respective cells
-  for nodeInd=1:nNodes
+  for nodeInd=1:n_nodes
     for cellInd=1:Nx*Ny
-      if isInsideRect(cl.cells[cellInd].square,nodeList[nodeInd])
-        push!(cl.cells[cellInd].nodeList,nodeInd)
+      if isInsideRect(cl.cells[cellInd].square,particleList[nodeInd].pos)
+        push!(cl.cells[cellInd].particleIDList,nodeInd)
         break
       end
     end
@@ -97,22 +81,22 @@ end
 """
 
 """
-function updateCellList!(cl::CellList,nodeList::Vector{Point2D{T}}) where T<:Real
+function updateCellList!(cl::CellList,particleList::Vector{Particle2D{T}}) where T<:Real
   X0=cl.bounds[1]; X1=cl.bounds[2]; Y0=cl.bounds[3]; Y1=cl.bounds[4]
   Nx = Int(ceil((X1 - X0)/cl.sideLength))
   Ny = Int(ceil((Y1 - Y0)/cl.sideLength))
-  nNodes = length(nodeList)
+  nNodes = length(particleList)
 
   # 'zero-out' cell node lists
   for cellInd=1:Nx*Ny
-    cl.cells[cellInd].nodeList = Array{Int}(undef,0)
+    cl.cells[cellInd].particleIDList = Array{Int}(undef,0)
   end
 
   # assign nodes to respective cells
   for nodeInd=1:nNodes
     for cellInd=1:Nx*Ny
-      if isInsideRect(cl.cells[cellInd].square,nodeList[nodeInd])
-        push!(cl.cells[cellInd].nodeList,nodeInd)
+      if isInsideRect(cl.cells[cellInd].square,particleList[nodeInd].pos)
+        push!(cl.cells[cellInd].particleIDList,nodeInd)
         break
       end
     end
@@ -188,9 +172,9 @@ function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M
   numNodesPerElm = (mesh.order == :Linear ? 4 : 9)
 
   # generate particle List for FEM nodes
-  nodeList = [Point2D(mesh.xy[i].x,mesh.xy[i].y) for i=1:Nnodes]
+  particleList = [Particle2D(Point2D(mesh.xy[i].x,mesh.xy[i].y),0.0,0.0) for i=1:Nnodes]
 
-  tempCL = generateCellList(nodeList,totalBounds,L)
+  tempCL = generateCellList(particleList,totalBounds,L)
   femCLmap = Array{Array{Int}}(undef,length(tempCL.cells))
 
   # initialize element array
@@ -201,7 +185,7 @@ function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M
     tempArr = Array{Int}(undef,0)
 
     #for each node in that cell
-    for nodeInd in tempCL.cells[cellInd].nodeList
+    for nodeInd in tempCL.cells[cellInd].particleIDList
       fill!(elementArray,zero(Int))
 
       # map node index to element
@@ -223,7 +207,7 @@ end
 
 # determines whether or not point is inside a rectangle
 # also includes being on bottom or left boundary
-function isInsideRect(rect::Vector{T},point::Point2D{T})  where T<:Real
+function isInsideRect(rect::Vector{T},point::P)  where {T<:Real,P<:AbstractPoint}
   x0=rect[1]; x1=rect[2]; y0=rect[3]; y1=rect[4]
 
   if point.x<=x1 && point.x>=x0 && point.y<=y1 && point.y>=y0

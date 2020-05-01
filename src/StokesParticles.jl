@@ -1,8 +1,12 @@
 module StokesParticles
 
-using BenchmarkTools 
+using BenchmarkTools                # delete this once everything is cleaned up
 
-include("ParticleTypes.jl")
+abstract type AbstractWall end
+abstract type AbstractParticle end
+abstract type AbstractPoint end
+
+include("PointAndWallDefinitions.jl")
 include("CellLists.jl")
 
 using figtree_jll
@@ -19,13 +23,7 @@ export femGenerateMap,
        generateCellList,
        updateCellList!
 
-# fgt.jl
-export interpFGT!,
-fgt!,
-dgt!,
-mydgt!
-
-# ParticleTypes.jl
+# TypeDefinitions.jl
 export Point2D,
        LineWall,
        CircleWall,

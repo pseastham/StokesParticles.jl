@@ -1,19 +1,29 @@
-abstract type AbstractWall end
-abstract type AbstractParticle end
 
-mutable struct Point2D{T}
+mutable struct Point2D{T} <: AbstractPoint
     x::T
     y::T
 end
 
-struct Particle{T} <: AbstractParticle
+mutable struct Point3D{T} <: AbstractPoint
+    x::T
+    y::T
+    z::T
+end
+
+struct Particle2D{T} <: AbstractParticle
     p::Point2D{T}
     radius::T
     density::T
 end
 
+struct Particle3D{T} <: AbstractParticle
+    p::Point3D{T}
+    radius::T
+    density::T
+end
+
 struct LineWall{T} <: AbstractWall
-    nodes::Vector{Point2D{T}}       # 2 points, defining start and end
+    nodes::Vector{Point2D{T}}     # 2 points, defining start and end
     n::Vector{T}                  # normal unit vector of wall
     t::Vector{T}                  # tangent unit vector of wall
     orientation::Symbol           # can be :right, :left, or :both to determine 

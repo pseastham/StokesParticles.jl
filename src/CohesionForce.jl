@@ -13,12 +13,19 @@ function LJForceMagnitude(r::T,s::T,d::T,ϵ::T) where T<:Real
 end
 
 """
-function ForceCalculation(ϵ::T,d::T,rc::T,Δx::T,Δy::T) where T<:Real
-    len = sqrt(Δx*Δx + Δy*Δy)
-    tx=Δx/len; ty=Δy/len
+    ForceCalculation(r,s,d,ϵ,Δx,Δy)
 
-    # lennard-jones potential
-    LJmag = LennardJonesForceMagnitude(ϵ,d,len,rc)
+Returns 2D cohesion force between two particles. r is the distance between 
+particles, s is a scale parameter for the strength of interaction, d is the 
+equilibrium distance between particles, and ϵ is the interaction extension, 
+typically a small positive number. 
+"""
+function ForceCalculation(r::T,s::T,d::T,ϵ::T,Δx::T,Δy::T) where T<:Real
+    len = sqrt(Δx^2 + Δy^2)
+    tx = Δx/len
+    ty = Δy/len
+
+    LJmag = LJForceMagnitude(r,s,d,ϵ)
 
     Fx = tx*LJmag
     Fy = ty*LJmag
@@ -26,29 +33,38 @@ function ForceCalculation(ϵ::T,d::T,rc::T,Δx::T,Δy::T) where T<:Real
     return Fx,Fy
 end 
 
-function computeCohesion!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D{T}},radiusList::Vector{T},rc::T,ϵ::T) where T<:Real
+"""
+    computeCohesion_backup!(cfX,cfY,nodeList,radiusList,rc,ϵ)
+
+Backup method to directly compute cohesion force on all particles. cfX and cfY are arrays storing
+forces on each particle. nodeList and radiuslist are arrays of the points and radii, respectively,
+or the particles. r is the distance between particles, s is a scale parameter for the strength 
+of interaction, and ϵ is the interaction extension, typically a small positive number. 
+
+Note that this method is *slow* for large number of particles. It is O(N^2) where N is the number
+of particles (the length of nodeList). 
+"""
+function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D{T}},radiusList::Vector{T},r::T,s::T,ϵ::T) where T<:Real
     Nparticles = length(nodeList)
 
-    # zero-out cohesion
     fill!(cfX,zero(T))
     fill!(cfY,zero(T))
 
-    for ti=1:Nparticles, tj=(ti+1):Nparticles
+    for ti=1:Nparticles, tj=(ti+1):Nparticles       # takes advantage of force anti-symmetry
         Δx = nodeList[tj].x - nodeList[ti].x
         Δy = nodeList[tj].y - nodeList[ti].y
 
         d = radiusList[ti] + radiusList[tj]
 
-        fx,fy = ForceCalculation(ϵ,d,rc,Δx,Δy)
-        cfX[ti] += fx
-        cfY[ti] += fy
-        cfX[tj] -= fx
-        cfY[tj] -= fy
+        fx,fy = ForceCalculation(r,s,d,ϵ,Δx,Δy)
+        cfX[ti] += fx; cfY[ti] += fy
+        cfX[tj] -= fx; cfY[tj] -= fy
     end
 
     nothing
 end
 
+"""
 # nodelist: list of points to compute force between
 # radiuslist: list of particle radii            (currently unused)
 # cfX: cohesion force in x-direction
