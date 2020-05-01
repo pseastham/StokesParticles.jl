@@ -1,4 +1,5 @@
 mutable struct sh_data  # sinkhole data
+    n_particles::Int
     polygon::Vector{Point2D{Float64}}
     extremePoint::Point2D{Float64}
     pointOnWall::Point2D{Float64}
@@ -19,7 +20,7 @@ mutable struct sh_data  # sinkhole data
         cfY          = zeros(n_particles)
         afX          = zeros(n_particles)
         afY          = zeros(n_particles)
-        return new(polygon,extremePoint,pointOnWall,xquad,yquad,cfX,cfY,afX,afY)
+        return new(n_particles,polygon,extremePoint,pointOnWall,xquad,yquad,cfX,cfY,afX,afY)
     end
     function sh_data(n_particles::Int)
         return sh_data(1,n_particles)

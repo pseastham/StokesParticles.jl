@@ -230,3 +230,35 @@ function computeParticleVelocity_all_TEST()
 
     nothing
 end
+
+function update_particles_nofluid!(pList,wList,param,data)
+    pUarr,pVarr = compute_particle_velocity_nofluids(pList,wList,param,data)
+    for ti=1:data.n_particles
+        pList[ti].pos.x += pUarr[ti]*param.Δt
+        pList[ti].pos.y += pVarr[ti]*param.Δt
+    end
+
+    nothing
+end
+
+# does not use cell lists
+function compute_particle_velocity_nofluids(pList,wList,param,data)
+    # 1. compute gravitational force
+    gfX = zeros(data.n_particles)
+    gfY = -ones(data.n_particles)
+
+    # 2. interpolate seepage velocity of fluid at position of particles
+    # not done when there is no fluid
+
+    # 3. compute cohesion forces
+    #computeCohesion!(cfX,cfY,pList,rList,rc,ϵ)
+    computeCohesion_backup!(data.cfX,data.cfY,pList,param.s,param.ϵ)
+
+    # 4. compute adhesion forces
+    #AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
+
+    pUarr = gfX + data.cfX # + adhesion forces
+    pVarr = gfY + data.cfY # + adhesion forces
+
+    return pUarr,pVarr
+end
