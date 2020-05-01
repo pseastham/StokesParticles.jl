@@ -34,27 +34,27 @@ function ForceCalculation(r::T,s::T,d::T,ϵ::T,Δx::T,Δy::T) where T<:Real
 end 
 
 """
-    computeCohesion_backup!(cfX,cfY,nodeList,radiusList,rc,ϵ)
+    computeCohesion_backup!(cfX,cfY,particleList,rc,ϵ)
 
 Backup method to directly compute cohesion force on all particles. cfX and cfY are arrays storing
-forces on each particle. nodeList and radiuslist are arrays of the points and radii, respectively,
-or the particles. r is the distance between particles, s is a scale parameter for the strength 
-of interaction, and ϵ is the interaction extension, typically a small positive number. 
+forces on each particle. particleList is an arrays of the particles. r is the distance between 
+particles, s is a scale parameter for the strength of interaction, and ϵ is the interaction 
+extension, typically a small positive number. 
 
 Note that this method is *slow* for large number of particles. It is O(N^2) where N is the number
 of particles (the length of nodeList). 
 """
-function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D{T}},radiusList::Vector{T},r::T,s::T,ϵ::T) where T<:Real
-    Nparticles = length(nodeList)
+function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vector{Point2D{T}},r::T,s::T,ϵ::T) where T<:Real
+    Nparticles = length(particleList)
 
     fill!(cfX,zero(T))
     fill!(cfY,zero(T))
 
     for ti=1:Nparticles, tj=(ti+1):Nparticles       # takes advantage of force anti-symmetry
-        Δx = nodeList[tj].x - nodeList[ti].x
-        Δy = nodeList[tj].y - nodeList[ti].y
+        Δx = particleList[tj].pos.x - particleList[ti].pos.x
+        Δy = particleList[tj].pos.y - particleList[ti].pos.y
 
-        d = radiusList[ti] + radiusList[tj]
+        d = particleList[ti].radius + particleList[tj].radius
 
         fx,fy = ForceCalculation(r,s,d,ϵ,Δx,Δy)
         cfX[ti] += fx; cfY[ti] += fy

@@ -10,7 +10,7 @@
 #   2. Seepage Force (fluid velocity)
 #   3. particle-particle Cohesion Force (Lennard Jones Potential)
 #   4. particle-particle Adhesion Force (Lennard Jones Potential)
-function updateParticle_all!(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
+function updateParticle_all!(mesh,pList::Vector{Particle2D{T}},wList::Vector{W},
                                 u::Vector{T},v::Vector{T},paramArr,Δt::T,
                                 femCLmap::Array{Array{Int64,N} where N,1},
                                 clL,clTotalBounds,particleCL,
@@ -21,7 +21,7 @@ function updateParticle_all!(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wLi
                                 uSeepage::Vector{T},vSeepage::Vector{T},
                                 cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
 
-    pUarr,pVarr = computeParticleVelocity_all(mesh,pList,rList,wList,u,v,paramArr,femCLmap,clL,clTotalBounds,particleCL,
+    pUarr,pVarr = computeParticleVelocity_all(mesh,pList,wList,u,v,paramArr,femCLmap,clL,clTotalBounds,particleCL,
                                                 polygon,extremePoint,w,uEl,vEl,
                                                 a,b,c,d,pointOnWall,xquad,yquad,uSeepage,vSeepage,cfX,cfY,afX,afY)
 
@@ -29,28 +29,28 @@ function updateParticle_all!(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wLi
     # Update particle position -- this is where verlet integration might come into play
     # =========================
     for ti=1:length(rList)
-        pList[ti].x += pUarr[ti]*Δt
-        pList[ti].y += pVarr[ti]*Δt
+        pList[ti].pos.x += pUarr[ti]*Δt
+        pList[ti].pos.y += pVarr[ti]*Δt
     end
 
     nothing
 end
 
-function updateParticle_all_nofluid!(pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
+function updateParticle_all_nofluid!(pList::Vector{Particle2D{T}},wList::Vector{W},
                                     paramArr,Δt::T,clL,clTotalBounds,particleCL,
                                     polygon::Vector{Point2D{T}},extremePoint::Point2D{T},
                                     pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T},
                                     cfX::Vector{T},cfY::Vector{T},afX::Vector{T},afY::Vector{T}) where {T<:Real, W<:AbstractWall}
 
-    pUarr,pVarr = computeParticleVelocity_all_nofluid(pList,rList,wList,paramArr,clL,clTotalBounds,particleCL,
+    pUarr,pVarr = computeParticleVelocity_all_nofluid(pList,wList,paramArr,clL,clTotalBounds,particleCL,
                                     polygon,extremePoint,pointOnWall,xquad,yquad,cfX,cfY,afX,afY)
 
     # =========================
     # Update particle position -- this is where verlet integration might come into play
     # =========================
     for ti=1:length(rList)
-        pList[ti].x += pUarr[ti]*Δt
-        pList[ti].y += pVarr[ti]*Δt
+        pList[ti].pos.x += pUarr[ti]*Δt
+        pList[ti].pos.y += pVarr[ti]*Δt
     end
 
     nothing
@@ -73,7 +73,7 @@ OUTPUT:
     // nothing (updates BLANK in-place)
     pUarr, pVarr: 2D velocity arrays for particles
 """
-function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
+function computeParticleVelocity_all(mesh,pList::Vector{Particle2D{T}},wList::Vector{W},
                                         u::Vector{T},v::Vector{T},paramArr,
                                         femCLmap::Array{Array{Int64,N} where N,1},
                                         clL,clTotalBounds,particleCL,
@@ -141,7 +141,7 @@ function computeParticleVelocity_all(mesh,pList::Vector{Point2D{T}},rList::Vecto
     return pUarr,pVarr
 end
 
-function computeParticleVelocity_all_nofluid(pList::Vector{Point2D{T}},rList::Vector{T},wList::Vector{W},
+function computeParticleVelocity_all_nofluid(pList::Vector{Particle2D{T}},wList::Vector{W},
                                             paramArr,clL,clTotalBounds,particleCL,
                                             polygon::Vector{Point2D{T}},extremePoint::Point2D{T},
                                             pointOnWall::Point2D{T},xquad::Vector{T},yquad::Vector{T},
@@ -179,10 +179,10 @@ function computeParticleVelocity_all_nofluid(pList::Vector{Point2D{T}},rList::Ve
 
     # 3. compute cohesion forces
     #computeCohesion!(cfX,cfY,pList,rList,rc,ϵ)
-    computeCohesion_CL!(cfX,cfY,pList,rList,rc,ϵ,particleCL)
+    computeCohesion_backup!(cfX,cfY,pList,rc,ϵ,particleCL)
 
     # 4. compute adhesion forces
-    AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
+    #AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
 
     # 5. use stokes force balance to compute particle velocities
     #κ = permeability
