@@ -43,7 +43,7 @@ extension, typically a small positive number.
 Note that this method is *slow* for large number of particles. It is O(N^2) where N is the number
 of particles (the length of nodeList). 
 """
-function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vector{Particle2D{T}},s::T,ϵ::T) where T<:Real
+function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vector{P},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle}
     Nparticles = length(particleList)
 
     fill!(cfX,zero(T))
