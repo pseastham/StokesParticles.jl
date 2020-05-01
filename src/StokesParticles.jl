@@ -32,8 +32,7 @@ export Point2D,
        ArcWall
 
 # UpdateParticles.jl
-export updateParticle_all!,
-       updateParticle_all_nofluid!
+export update_particles_nofluid!
 
 # DataReuse
 export sh_data
