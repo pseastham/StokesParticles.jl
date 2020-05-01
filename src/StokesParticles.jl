@@ -25,6 +25,7 @@ export femGenerateMap,
 
 # TypeDefinitions.jl
 export Point2D,
+       Particle2D,
        LineWall,
        CircleWall,
        ArcWall
