@@ -15,15 +15,14 @@ end
 """
     ForceCalculation(r,s,d,ϵ,Δx,Δy)
 
-Returns 2D cohesion force between two particles. r is the distance between 
-particles, s is a scale parameter for the strength of interaction, d is the 
-equilibrium distance between particles, and ϵ is the interaction extension, 
-typically a small positive number. 
+Returns 2D cohesion force between two particles. s is a scale parameter for 
+the strength of interaction, d is the equilibrium distance between particles, 
+and ϵ is the interaction extension, typically a small positive number. 
 """
-function ForceCalculation(r::T,s::T,d::T,ϵ::T,Δx::T,Δy::T) where T<:Real
-    len = sqrt(Δx^2 + Δy^2)
-    tx = Δx/len
-    ty = Δy/len
+function ForceCalculation(s::T,d::T,ϵ::T,Δx::T,Δy::T) where T<:Real
+    r = sqrt(Δx^2 + Δy^2)
+    tx = Δx/r
+    ty = Δy/r
 
     LJmag = LJForceMagnitude(r,s,d,ϵ)
 
@@ -44,7 +43,7 @@ extension, typically a small positive number.
 Note that this method is *slow* for large number of particles. It is O(N^2) where N is the number
 of particles (the length of nodeList). 
 """
-function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vector{Point2D{T}},r::T,s::T,ϵ::T) where T<:Real
+function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vector{Particle2D{T}},s::T,ϵ::T) where T<:Real
     Nparticles = length(particleList)
 
     fill!(cfX,zero(T))
@@ -56,7 +55,7 @@ function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vec
 
         d = particleList[ti].radius + particleList[tj].radius
 
-        fx,fy = ForceCalculation(r,s,d,ϵ,Δx,Δy)
+        fx,fy = ForceCalculation(s,d,ϵ,Δx,Δy)
         cfX[ti] += fx; cfY[ti] += fy
         cfX[tj] -= fx; cfY[tj] -= fy
     end

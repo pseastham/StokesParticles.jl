@@ -179,10 +179,10 @@ function computeParticleVelocity_all_nofluid(pList::Vector{Particle2D{T}},wList:
 
     # 3. compute cohesion forces
     #computeCohesion!(cfX,cfY,pList,rList,rc,ϵ)
-    computeCohesion_backup!(cfX,cfY,pList,rc,ϵ,particleCL)
+    computeCohesion_backup!(cfX,cfY,pList,s,ϵ)
 
     # 4. compute adhesion forces
-    #AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
+    AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
 
     # 5. use stokes force balance to compute particle velocities
     #κ = permeability
