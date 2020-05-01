@@ -15,6 +15,7 @@ include("fgt.jl")
 include("UpdateParticles.jl")
 include("AdhesionForce.jl")
 include("CohesionForce.jl")
+include("DataReuse.jl")
 
 export AbstractWall, NearestPoint, generateQuadNodes!,isInLine
 
@@ -34,11 +35,7 @@ export Point2D,
 export updateParticle_all!,
        updateParticle_all_nofluid!
 
-# for testing...
-export BarycentricVelocityInterp_CL!,
-       computeCohesion!,
-       AdhesionForce!,
-       computeCohesion_CL!,
-       LennardJonesForceMagnitude
+# DataReuse
+export sh_data
 
 end # module
