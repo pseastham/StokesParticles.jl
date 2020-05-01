@@ -1,6 +1,6 @@
 mutable struct sh_data  # sinkhole data
     polygon::Vector{Point2D{Float64}}
-    extremePoint::Vector{Point2D{Float64}}
+    extremePoint::Point2D{Float64}
     pointOnWall::Point2D{Float64}
     xquad::Vector{Float64}
     yquad::Vector{Float64}
