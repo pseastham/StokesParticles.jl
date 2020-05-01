@@ -13,13 +13,13 @@ end
 struct Particle2D{T} <: AbstractParticle
     pos::Point2D{T}
     radius::T
-    density::T
+    materialID::Int
 end
 
 struct Particle3D{T} <: AbstractParticle
     pos::Point3D{T}
     radius::T
-    density::T
+    materialID::Int
 end
 
 struct LineWall{T} <: AbstractWall
