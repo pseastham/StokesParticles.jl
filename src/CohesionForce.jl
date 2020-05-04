@@ -83,7 +83,7 @@ function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vecto
 
         fx,fy = ForceCalculation(s,d,ϵ,Δx,Δy)
         afX[tp] += fx
-        afY[tp] += fx
+        afY[tp] += fy
     end
 
     nothing
