@@ -31,6 +31,7 @@ end
 struct CircleWall{T} <: AbstractWall
     center::Point2D{T}        # point that defines center
     radius::T                 # radius of circle
+    thickness::T              # gives circle curve "area"
 end
 
 struct ArcWall{T} <: AbstractWall
