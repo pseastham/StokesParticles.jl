@@ -115,3 +115,15 @@ function onSegment(p::Point2D{T},q::Point2D{T},r::Point2D{T}) where T<:Real
     return false
   end
 end
+function onSegmentWithBuffer(p::Point2D{T},q::Point2D{T},r::Point2D{T},buffer::T) where T<:Real
+  maxX = (p.x >= r.x ? p.x : r.x) + buffer
+  minX = (p.x >= r.x ? r.x : p.x) - buffer
+  maxY = (p.y >= r.y ? p.y : r.y) + buffer
+  minY = (p.y >= r.y ? p.y : r.y) - buffer
+
+  if (q.x <= maxX && q.x >= minX && q.y <= maxY && q.y >= minY)
+      return true
+  else
+    return false
+  end
+end

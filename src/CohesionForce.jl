@@ -140,7 +140,7 @@ end
 
 # function to determine whether quadrature node (sx,sy) is within line
 function isInLine(wall::LineWall{T},point::Point2D{T}) where T<:Real
-    return onSegment(wall.nodes[1],point,wall.nodes[2])                         # onSegment is located in isInside.jl
+    return onSegmentWithBuffer(wall.nodes[1],point,wall.nodes[2],wall.thickness/2)     # onSegment is located in isInside.jl
 end
 # note: s is input only to make all arguments for isInLine the same
 function isInLine(wall::CircleWall{T},point::Point2D{T}) where T<:Real
