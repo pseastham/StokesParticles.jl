@@ -95,8 +95,8 @@ end
 function NearestPoint!(point::Point2D{T},node::Particle2D{T},wall::LineWall) where T<:Real
     px=node.pos.x; py=node.pos.y
 
-    Ax=wall.nodes[1].pos.x; Ay=wall.nodes[1].pos.y
-    Bx=wall.nodes[2].pos.x; By=wall.nodes[2].pos.y
+    Ax=wall.nodes[1].x; Ay=wall.nodes[1].y
+    Bx=wall.nodes[2].x; By=wall.nodes[2].y
 
     bx=px-Ax; by=py-Ay
     ax=Bx-Ax; ay=By-Ay
