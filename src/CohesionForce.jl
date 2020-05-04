@@ -76,8 +76,8 @@ function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vecto
         NearestPoint!(pointOnWall,particleList[tp],wallList[tw])
 
         # compute adhesion force
-        Δx = particleList[tp].pos.x - pointOnWall.x
-        Δy = particleList[tp].pos.y - pointOnWall.y
+        Δx = pointOnWall.x - particleList[tp].pos.x
+        Δy = pointOnWall.y - particleList[tp].pos.y
 
         d = particleList[tp].radius + wallList[tw].thickness/2
 
