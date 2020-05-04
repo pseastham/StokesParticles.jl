@@ -65,7 +65,7 @@ function LineWall(nodes::Vector{Point2D{T}},thickness::T) where T<:Real
 end
 LineWall(n1,n2,thickness) = LineWall([n1,n2],thickness)
 
-function ArcWall(V::Vector{Vector{Float64}},thickness:T)
+function ArcWall(V::Vector{Vector{Float64}},thickness::T)
     p1 = Point(V[1][1],V[1][2])
     p2 = Point(V[2][1],V[2][2])
     p3 = Point(V[3][1],V[3][2])
