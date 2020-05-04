@@ -6,8 +6,8 @@ abstract type AbstractWall end
 abstract type AbstractParticle end
 abstract type AbstractPoint end
 
-include("isInside.jl")
 include("PointAndWallDefinitions.jl")
+include("isInside.jl")
 include("CellLists.jl")
 
 using figtree_jll

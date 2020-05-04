@@ -1,7 +1,5 @@
 # functions for determining whether a point lies within a quadrilateral
 
-include("ParticleTypes.jl")  # loads Point2D type
-
 """
   isInside(polygon, n, p)
 
