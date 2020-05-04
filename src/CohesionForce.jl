@@ -155,8 +155,8 @@ function isInLine(wall::ArcWall{T},point::Point2D{T}) where T<:Real
     radius = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
     val = abs(radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
 
-    θ1 = atan(wall.nodes[1].y-cy,wall.nodes[1].x-cx)
-    θ2 = atan(wall.nodes[3].y-cy,wall.nodes[3].x-cx)
+    θ1 = atan(wall.nodes[1].y-cy,wall.nodes[1].x-cx) - pi/12
+    θ2 = atan(wall.nodes[3].y-cy,wall.nodes[3].x-cx) + pi/12
     θs = atan(point.y-cy,point.x-cx)
 
     TOL = 1e-12
