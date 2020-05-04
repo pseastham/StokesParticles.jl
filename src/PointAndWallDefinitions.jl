@@ -22,7 +22,8 @@ struct Particle3D{T} <: AbstractParticle
 end
 
 struct LineWall{T} <: AbstractWall
-    nodes::Vector{Point2D{T}}       # 2 points, defining start and end
+    nodes::Vector{Point2D{T}}     # 2 points, defining start and end
+    thickness::T                  # gives line "area"
     n::Vector{T}                  # normal unit vector of wall
     t::Vector{T}                  # tangent unit vector of wall
 end
@@ -33,11 +34,12 @@ struct CircleWall{T} <: AbstractWall
 end
 
 struct ArcWall{T} <: AbstractWall
-    nodes::Vector{Point2D{T}}     # 3 nodes, 1) start, 2) center, and 3) end going counterclockwise
+    nodes::Vector{Point2D{T}}   # 3 nodes, 1) start, 2) center, and 3) end going counterclockwise
+    thickness::T                # gives curve "area"
 end
 
 # initializes new wall defined by 2 points (Start,End)
-function LineWall(nodes::Vector{Point2D{T}}) where T<:Real
+function LineWall(nodes::Vector{Point2D{T}},thickness::T) where T<:Real
     if length(nodes) != 2
         throw(DimensionMismatch("line is defined by 2 points"))
     end
@@ -58,11 +60,11 @@ function LineWall(nodes::Vector{Point2D{T}}) where T<:Real
     n[1] = -t[2]
     n[2] =  t[1]
 
-    return LineWall(nodes,n,t)
+    return LineWall(nodes,thickness,n,t)
 end
-LineWall(n1,n2) = LineWall([n1,n2])
+LineWall(n1,n2,thickness) = LineWall([n1,n2],thickness)
 
-function ArcWall(V::Vector{Vector{Float64}},orientation::Symbol)
+function ArcWall(V::Vector{Vector{Float64}},thickness:T)
     p1 = Point(V[1][1],V[1][2])
     p2 = Point(V[2][1],V[2][2])
     p3 = Point(V[3][1],V[3][2])
@@ -75,6 +77,6 @@ function ArcWall(V::Vector{Vector{Float64}},orientation::Symbol)
         error("points do not make a circle with constant radius, r1=$(round(r1,2)), r2=$(round(r2,2))")
     end
 
-    return ArcWall([p1,p2,p3])
+    return ArcWall([p1,p2,p3],thickness)
 end
-ArcWall(v1,v2,v3) = ArcWall([v1,v2,v3])
+ArcWall(v1,v2,v3,thickness) = ArcWall([v1,v2,v3],thickness)
