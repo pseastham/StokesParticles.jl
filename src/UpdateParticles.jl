@@ -245,7 +245,7 @@ end
 function compute_particle_velocity_nofluids(pList,wList,param,data)
     # 1. compute gravitational force
     gfX = zeros(data.n_particles)
-    gfY = -ones(data.n_particles)
+    gfY = -param.G*ones(data.n_particles)
 
     # 2. interpolate seepage velocity of fluid at position of particles
     # not done when there is no fluid
