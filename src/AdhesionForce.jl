@@ -1,12 +1,9 @@
-# Functions for computing particle-wall contact forces of
-# via quadrature of lennard-jones potential forces
 
-#include("CellLists.jl")      # loads in Point2D type
-#include("ParticleTypes.jl")  # load Wall types
-#include("CohesionForce.jl")  # loads in LJ force function
-#include("isInside.jl")       # loads onSegment()
 
-### Compute nearest point to particle on LineWall, CircleWall, and ArcWall
+"""
+#    NearestPoint!(point,node,wall)
+#
+#Compute nearest point to particle on LineWall, CircleWall, and ArcWall 
 function NearestPoint!(point::Point2D{T},node::Point2D{T},wall::LineWall) where T<:Real
     px=node.x; py=node.y
 
@@ -61,6 +58,7 @@ function isCloseEnough(point::Point2D{T},node::Point2D{T},k,radius::T) where T<:
 
     return  (ℓ < k*2*radius ? true : false)
 end
+
 
 # generates quadrature nodes for linewall, circlewall, and arcwall
 # point: center point about which quadrature nodes are taken
@@ -329,3 +327,5 @@ function AdhesionForce!(afX::Vector{T},afY::Vector{T},pList::Vector{Point2D{T}},
 
     nothing
 end
+
+"""

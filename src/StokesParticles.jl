@@ -12,10 +12,9 @@ include("CellLists.jl")
 using figtree_jll
 
 include("fgt.jl")
-include("UpdateParticles.jl")
-include("AdhesionForce.jl")
 include("CohesionForce.jl")
 include("DataReuse.jl")
+include("UpdateParticles.jl")
 
 export AbstractWall, NearestPoint, generateQuadNodes!,isInLine
 

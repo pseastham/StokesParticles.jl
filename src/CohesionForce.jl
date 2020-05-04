@@ -63,6 +63,81 @@ function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vec
     nothing
 end
 
+function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vector{P},wallList::Vector{W},pointOnWall<:Point2D{T},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle,W<:AbstractWall}
+    if length(afX) != length(afY)
+        throw(DimensionMismatch("length of afX and afY must match!"))
+    end
+
+    # zero-out adhesion array
+    fill!(afX,zero(T))
+    fill!(afY,zero(T))
+
+    for tp=1:length(particleList), tw=1:length(wallList)
+        NearestPoint!(pointOnWall,particleList[tp],wallList[tw])
+
+        # compute adhesion force
+        Δx = particleList[tp].pos.x - pointOnWall.x
+        Δy = particleList[tp].pos.y - pointOnWall.y
+
+        d = particleList[tp].radius + wallList[tw].thickness/2
+
+        fx,fy = ForceCalculation(s,d,ϵ,Δx,Δy)
+        afX[tp] += fx
+        afY[tp] += fx
+    end
+
+    nothing
+end
+
+#    NearestPoint!(point,node,wall)
+#
+#Compute nearest point to particle on LineWall, CircleWall, and ArcWall 
+function NearestPoint!(point::Point2D{T},node::Particle2D{T},wall::LineWall) where T<:Real
+    px=node.pos.x; py=node.pos.y
+
+    Ax=wall.nodes[1].pos.x; Ay=wall.nodes[1].pos.y
+    Bx=wall.nodes[2].pos.x; By=wall.nodes[2].pos.y
+
+    bx=px-Ax; by=py-Ay
+    ax=Bx-Ax; ay=By-Ay
+
+    ℓ2 = ax^2+ay^2
+
+    dotprod = ax*bx + ay*by
+
+    point.x = dotprod*ax/ℓ2 + Ax
+    point.y = dotprod*ay/ℓ2 + Ay
+
+    nothing
+end
+function NearestPoint!(point::Point2D{T},node::Particle2D{T},wall::CircleWall) where T<:Real
+    px=node.pos.x; py=node.pos.y
+    cx=wall.center.x; cy=wall.center.y
+    r = wall.radius
+    θ = atan(py-cy,px-cx)
+
+    point.x = cx + r*cos(θ)
+    point.y = cy + r*sin(θ)
+
+    nothing
+end
+function NearestPoint!(point::Point2D{T},node::Particle2D{T},wall::ArcWall) where T<:Real
+    px= node.pos.x; py=node.pos.y
+    cx= wall.nodes[2].x; cy=wall.nodes[2].y
+    r = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
+    θ = atan(py-cy,px-cx)
+
+    point.x = cx + r*cos(θ)
+    point.y = cy + r*sin(θ)
+
+    nothing
+end
+function NearestPoint(node::Particle2D{T},wall::W) where {T<:Real,W<:AbstractWall}
+    point = Point2D(0.0,0.0)
+    NearestPoint!(point,node,wall)
+    return point
+end
+
 """
 # nodelist: list of points to compute force between
 # radiuslist: list of particle radii            (currently unused)

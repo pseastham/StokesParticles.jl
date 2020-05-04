@@ -255,7 +255,7 @@ function compute_particle_velocity_nofluids(pList,wList,param,data)
     computeCohesion_backup!(data.cfX,data.cfY,pList,param.s,param.ϵ)
 
     # 4. compute adhesion forces
-    #AdhesionForce!(afX,afY,pList,rList,wList,k,ϵ,pointOnWall,xquad,yquad)
+    computeAdhesionForce!(data.afX,data.afY,pList,wList,data.pointOnWall,param.s,param.ϵ)
 
     pUarr = gfX + data.cfX # + adhesion forces
     pVarr = gfY + data.cfY # + adhesion forces
