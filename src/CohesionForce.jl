@@ -74,16 +74,16 @@ function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vecto
 
     for tp=1:length(particleList), tw=1:length(wallList)
         NearestPoint!(pointOnWall,particleList[tp],wallList[tw])
+        if isInLine(wallList[tw],pointOnWall)
+            Δx = pointOnWall.x - particleList[tp].pos.x
+            Δy = pointOnWall.y - particleList[tp].pos.y
 
-        # compute adhesion force
-        Δx = pointOnWall.x - particleList[tp].pos.x
-        Δy = pointOnWall.y - particleList[tp].pos.y
+            d = particleList[tp].radius + wallList[tw].thickness/2
 
-        d = particleList[tp].radius + wallList[tw].thickness/2
-
-        fx,fy = ForceCalculation(s,d,ϵ,Δx,Δy)
-        afX[tp] += fx
-        afY[tp] += fy
+            fx,fy = ForceCalculation(s,d,ϵ,Δx,Δy)
+            afX[tp] += fx
+            afY[tp] += fy
+        end
     end
 
     nothing
@@ -137,6 +137,45 @@ function NearestPoint(node::Particle2D{T},wall::W) where {T<:Real,W<:AbstractWal
     NearestPoint!(point,node,wall)
     return point
 end
+
+# function to determine whether quadrature node (sx,sy) is within line
+function isInLine(wall::LineWall{T},point::Point2D{T}) where T<:Real
+    return onSegment(wall.nodes[1],point,wall.nodes[2])                         # onSegment is located in isInside.jl
+end
+# note: s is input only to make all arguments for isInLine the same
+function isInLine(wall::CircleWall{T},point::Point2D{T}) where T<:Real
+    cx = wall.center.x; cy=wall.center.y
+    val = abs(wall.radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
+    TOL = 1e-12
+    return (val < TOL ? true : false)
+end
+# note: s is input only to make all arguments for isInLine the same
+function isInLine(wall::ArcWall{T},point::Point2D{T}) where T<:Real
+    cx = wall.nodes[2].x; cy=wall.nodes[2].y
+    radius = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
+    val = abs(radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
+
+    θ1 = atan(wall.nodes[1].y-cy,wall.nodes[1].x-cx)
+    θ2 = atan(wall.nodes[3].y-cy,wall.nodes[3].x-cx)
+    θs = atan(point.y-cy,point.x-cx)
+
+    TOL = 1e-12
+    isOn = false
+    if val < TOL
+        if θ1 > θ2
+            if θs > θ1 || θs < θ2
+                isOn = true
+            end
+        else
+            if θs > θ1 && θs < θ2
+                return true
+            end
+        end
+    end
+
+    return isOn
+end
+
 
 """
 # nodelist: list of points to compute force between
