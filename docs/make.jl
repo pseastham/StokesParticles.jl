@@ -1,5 +1,7 @@
 using Documenter, StokesParticles
 
+push!(LOAD_PATH,"../src/")
+
 makedocs(;
     modules=[StokesParticles],
     format=Documenter.HTML(),
