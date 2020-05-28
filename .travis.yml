@@ -30,6 +30,7 @@ jobs:
       julia: 1.3
       script: julia --project=docs -e '
           using Pkg;
+          Pkg.add(Pkg.PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"));
           Pkg.develop(PackageSpec(path=pwd()));
           Pkg.instantiate();
           include("docs/make.jl");'
