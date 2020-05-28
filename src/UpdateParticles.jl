@@ -225,8 +225,7 @@ function computeParticleVelocity_all_TEST()
     G=1.0; rc=1.1; ϵ=0.1; k=2; Nquad=20
     paramArr = (G,rc,ϵ,k,Nquad)
 
-    #computeParticleVelocity_all(mesh,pList,rList,wList,u,v,paramArr)
-    @btime computeParticleVelocity_all($mesh,$pList,$rList,$wList,$u,$v,$paramArr)
+    computeParticleVelocity_all(mesh,pList,rList,wList,u,v,paramArr)
 
     nothing
 end

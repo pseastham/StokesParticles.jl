@@ -1,7 +1,5 @@
 module StokesParticles
 
-using BenchmarkTools                # delete this once everything is cleaned up
-
 abstract type AbstractWall end
 abstract type AbstractParticle end
 abstract type AbstractPoint end
@@ -13,7 +11,7 @@ include("CellLists.jl")
 using figtree_jll
 
 include("fgt.jl")
-include("CohesionForce.jl")
+include("Forces.jl")
 include("DataReuse.jl")
 include("UpdateParticles.jl")
 
