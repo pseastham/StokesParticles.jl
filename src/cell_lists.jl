@@ -1,16 +1,3 @@
-
-mutable struct Cell
-  particleIDList::Vector{Int}     # list of indices of particles that are within cell
-  square::Vector{Float64}         # bounding square that defines position of cell
-  neighborList::Vector{Int}       # list of cell neighbors, used for fast access
-end
-
-struct CellList
-  cells::Vector{Cell}             # array of cells -- this is main component
-  bounds::Vector{Float64}         # total bounds of cell list in [x0, x1, y0, y1] format
-  sideLength::Float64             # length of one cell inside cell list
-end
-
 """
   generateCellList(nodeList,square,L)
 
@@ -159,50 +146,6 @@ function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where 
   end
 
   nothing
-end
-
-# generates array of arrays for a mesh, useful when interpolating the FEM solution
-# L is the length of a single cell
-#
-# index of femCLmap corresponds to cell index
-# values of femCLmap[jj] correspond to index of elements inside cell jj
-function femGenerateMap(mesh::M,totalBounds::Vector{Float64},L::Float64) where M#<:AbstractMesh
-  Nnodes = length(mesh.xy)
-
-  numNodesPerElm = (mesh.order == :Linear ? 4 : 9)
-
-  # generate particle List for FEM nodes
-  particleList = [Particle2D(Point2D(mesh.xy[i].x,mesh.xy[i].y),0.0,0.0) for i=1:Nnodes]
-
-  tempCL = generateCellList(particleList,totalBounds,L)
-  femCLmap = Array{Array{Int}}(undef,length(tempCL.cells))
-
-  # initialize element array
-  elementArray = Array{Int}(undef,numNodesPerElm)
-
-  # convert all point indices to corresponding element indices
-  for cellInd = 1:length(tempCL.cells)
-    tempArr = Array{Int}(undef,0)
-
-    #for each node in that cell
-    for nodeInd in tempCL.cells[cellInd].particleIDList
-      fill!(elementArray,zero(Int))
-
-      # map node index to element
-      getElementFromNode!(elementArray,mesh,nodeInd)
-
-      for ti=1:numNodesPerElm
-        if elementArray[ti] != 0
-          push!(tempArr,elementArray[ti])
-        end
-      end
-    end
-
-    # assign elements to femCL as 'nodes'
-    femCLmap[cellInd] = unique(tempArr)
-  end
-
-  return femCLmap
 end
 
 # determines whether or not point is inside a rectangle

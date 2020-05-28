@@ -1,3 +1,7 @@
+abstract type AbstractWall end
+abstract type AbstractParticle end
+abstract type AbstractPoint end
+
 mutable struct Point2D{T} <: AbstractPoint
     x::T
     y::T
@@ -81,3 +85,44 @@ function ArcWall(V::Vector{Vector{Float64}},thickness::Float64)
     return ArcWall([p1,p2,p3],thickness)
 end
 ArcWall(v1,v2,v3,thickness) = ArcWall([v1,v2,v3],thickness)
+
+mutable struct Cell
+    particleIDList::Vector{Int}     # list of indices of particles that are within cell
+    square::Vector{Float64}         # bounding square that defines position of cell
+    neighborList::Vector{Int}       # list of cell neighbors, used for fast access
+end
+  
+struct CellList
+    cells::Vector{Cell}             # array of cells -- this is main component
+    bounds::Vector{Float64}         # total bounds of cell list in [x0, x1, y0, y1] format
+    sideLength::Float64             # length of one cell inside cell list
+end
+
+mutable struct scratch_data
+    n_particles::Int
+    polygon::Vector{Point2D{Float64}}
+    extremePoint::Point2D{Float64}
+    pointOnWall::Point2D{Float64}
+    xquad::Vector{Float64}
+    yquad::Vector{Float64}
+    cfX::Vector{Float64}
+    cfY::Vector{Float64}
+    afX::Vector{Float64}
+    afY::Vector{Float64}
+
+    function scratch_data(n_quad::Int,n_particles::Int)
+        polygon      = [Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0)]
+        extremePoint = Point2D(100_000.0,0.0)
+        pointOnWall  = Point2D(0.0,0.0)
+        xquad        = zeros(n_quad)
+        yquad        = zeros(n_quad)
+        cfX          = zeros(n_particles)
+        cfY          = zeros(n_particles)
+        afX          = zeros(n_particles)
+        afY          = zeros(n_particles)
+        return new(n_particles,polygon,extremePoint,pointOnWall,xquad,yquad,cfX,cfY,afX,afY)
+    end
+    function scratch_data(n_particles::Int)
+        return scratch_data(1,n_particles)
+    end
+end 

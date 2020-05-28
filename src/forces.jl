@@ -1,5 +1,3 @@
-# computes cohesion forces
-
 """
     LJForceMagnitude(r,s,d,ϵ)
 
@@ -88,94 +86,6 @@ function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vecto
 
     nothing
 end
-
-#    NearestPoint!(point,node,wall)
-#
-#Compute nearest point to particle on LineWall, CircleWall, and ArcWall 
-function NearestPoint!(point::Point2D{T},node::Particle2D{T},wall::LineWall) where T<:Real
-    px=node.pos.x; py=node.pos.y
-
-    Ax=wall.nodes[1].x; Ay=wall.nodes[1].y
-    Bx=wall.nodes[2].x; By=wall.nodes[2].y
-
-    bx=px-Ax; by=py-Ay
-    ax=Bx-Ax; ay=By-Ay
-
-    ℓ2 = ax^2+ay^2
-
-    dotprod = ax*bx + ay*by
-
-    point.x = dotprod*ax/ℓ2 + Ax
-    point.y = dotprod*ay/ℓ2 + Ay
-
-    nothing
-end
-function NearestPoint!(point::Point2D{T},node::Particle2D{T},wall::CircleWall) where T<:Real
-    px=node.pos.x; py=node.pos.y
-    cx=wall.center.x; cy=wall.center.y
-    r = wall.radius
-    θ = atan(py-cy,px-cx)
-
-    point.x = cx + r*cos(θ)
-    point.y = cy + r*sin(θ)
-
-    nothing
-end
-function NearestPoint!(point::Point2D{T},node::Particle2D{T},wall::ArcWall) where T<:Real
-    px= node.pos.x; py=node.pos.y
-    cx= wall.nodes[2].x; cy=wall.nodes[2].y
-    r = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
-    θ = atan(py-cy,px-cx)
-
-    point.x = cx + r*cos(θ)
-    point.y = cy + r*sin(θ)
-
-    nothing
-end
-function NearestPoint(node::Particle2D{T},wall::W) where {T<:Real,W<:AbstractWall}
-    point = Point2D(0.0,0.0)
-    NearestPoint!(point,node,wall)
-    return point
-end
-
-# function to determine whether quadrature node (sx,sy) is within line
-function isInLine(wall::LineWall{T},point::Point2D{T}) where T<:Real
-    return onSegmentWithBuffer(wall.nodes[1],point,wall.nodes[2],wall.thickness/2)     # onSegment is located in isInside.jl
-end
-# note: s is input only to make all arguments for isInLine the same
-function isInLine(wall::CircleWall{T},point::Point2D{T}) where T<:Real
-    cx = wall.center.x; cy=wall.center.y
-    val = abs(wall.radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
-    TOL = 1e-12
-    return (val < TOL ? true : false)
-end
-# note: s is input only to make all arguments for isInLine the same
-function isInLine(wall::ArcWall{T},point::Point2D{T}) where T<:Real
-    cx = wall.nodes[2].x; cy=wall.nodes[2].y
-    radius = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
-    val = abs(radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
-
-    θ1 = atan(wall.nodes[1].y-cy,wall.nodes[1].x-cx) - pi/24
-    θ2 = atan(wall.nodes[3].y-cy,wall.nodes[3].x-cx) + pi/24
-    θs = atan(point.y-cy,point.x-cx)
-
-    TOL = 1e-12
-    isOn = false
-    if val < TOL
-        if θ1 > θ2
-            if θs > θ1 || θs < θ2
-                isOn = true
-            end
-        else
-            if θs > θ1 && θs < θ2
-                return true
-            end
-        end
-    end
-
-    return isOn
-end
-
 
 """
 # nodelist: list of points to compute force between
