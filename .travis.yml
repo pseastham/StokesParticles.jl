@@ -14,7 +14,7 @@ notifications:
 script:
   - julia --project --check-bounds=yes -e '
     import Pkg;
-    Pkg.add("https://github.com/pseastham/StokesParticlesBuilder");
+    Pkg.add(PackageSpec(url="https://github.com/pseastham/StokesParticlesBuilder"));
     Pkg.build();
     Pkg.test("StokesParticles"; coverage=true)'
 
