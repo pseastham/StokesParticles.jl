@@ -55,7 +55,7 @@ function generateCellList(particleList::Vector{P},totalBounds::Vector{T},L::T) w
   # assign nodes to respective cells
   for nodeInd=1:n_nodes
     for cellInd=1:Nx*Ny
-      if isInsideRect(cl.cells[cellInd].square,particleList[nodeInd].pos)
+      if is_inside_rect(cl.cells[cellInd].square,particleList[nodeInd].pos)
         push!(cl.cells[cellInd].particleIDList,nodeInd)
         break
       end
@@ -82,7 +82,7 @@ function updateCellList!(cl::CellList,particleList::Vector{Particle2D{T}}) where
   # assign nodes to respective cells
   for nodeInd=1:nNodes
     for cellInd=1:Nx*Ny
-      if isInsideRect(cl.cells[cellInd].square,particleList[nodeInd].pos)
+      if is_inside_rect(cl.cells[cellInd].square,particleList[nodeInd].pos)
         push!(cl.cells[cellInd].particleIDList,nodeInd)
         break
       end
@@ -113,10 +113,10 @@ function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where 
     numDeleted = 0
     for ti=1:length(cl.cells[cellInd].nodeList)
       found = false
-      if !(isInsideRect(cl.cells[cellInd].square,nodeList[cl.cells[cellInd].nodeList[ti-numDeleted]]))
+      if !(is_inside_rect(cl.cells[cellInd].square,nodeList[cl.cells[cellInd].nodeList[ti-numDeleted]]))
         # search neighbors of cell for node
         for nbrs in cl.cells[cellInd].neighborList
-          if isInsideRect(cl.cells[nbrs].square,nodeList[cl.cells[cellInd].nodeList[ti-numDeleted]])
+          if is_inside_rect(cl.cells[nbrs].square,nodeList[cl.cells[cellInd].nodeList[ti-numDeleted]])
             push!(cl.cells[nbrs].nodeList,cl.cells[cellInd].nodeList[ti-numDeleted])
             found = true
             break
@@ -138,7 +138,7 @@ function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where 
   #println(length(nodesToFind))
   for nodeInd in nodesToFind
     for cellInd=1:Nx*Ny
-      if isInsideRect(cl.cells[cellInd].square,nodeList[nodeInd])
+      if is_inside_rect(cl.cells[cellInd].square,nodeList[nodeInd])
         push!(cl.cells[cellInd].nodeList,nodeInd)
         break
       end
@@ -150,7 +150,7 @@ end
 
 # determines whether or not point is inside a rectangle
 # also includes being on bottom or left boundary
-function isInsideRect(rect::Vector{T},point::P)  where {T<:Real,P<:AbstractPoint}
+function is_inside_rect(rect::Vector{T},point::P)  where {T<:Real,P<:AbstractPoint}
   x0=rect[1]; x1=rect[2]; y0=rect[3]; y1=rect[4]
 
   if point.x<=x1 && point.x>=x0 && point.y<=y1 && point.y>=y0

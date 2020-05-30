@@ -71,8 +71,8 @@ function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vecto
     fill!(afY,zero(T))
 
     for tp=1:length(particleList), tw=1:length(wallList)
-        NearestPoint!(pointOnWall,particleList[tp],wallList[tw])
-        if isInLine(wallList[tw],pointOnWall)
+        get_nearest_point!(pointOnWall,particleList[tp],wallList[tw])
+        if is_in_line(wallList[tw],pointOnWall)
             Δx = pointOnWall.x - particleList[tp].pos.x
             Δy = pointOnWall.y - particleList[tp].pos.y
 

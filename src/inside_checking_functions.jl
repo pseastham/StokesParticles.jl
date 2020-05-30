@@ -149,8 +149,46 @@ function get_nearest_point!(point::Point2D{T},node::Particle2D{T},wall::ArcWall)
 
   nothing
 end
-function NearestPoint(node::Particle2D{T},wall::W) where {T<:Real,W<:AbstractWall}
+function get_nearest_point(node::Particle2D{T},wall::W) where {T<:Real,W<:AbstractWall}
   point = Point2D(0.0,0.0)
   get_nearest_point!(point,node,wall)
   return point
+end
+
+# function to determine whether quadrature node (sx,sy) is within line
+function is_in_line(wall::LineWall{T},point::Point2D{T}) where T<:Real
+  return on_segment(wall.nodes[1],point,wall.nodes[2])
+end
+# note: s is input only to make all arguments for isInLine the same
+function is_in_line(wall::CircleWall{T},point::Point2D{T}) where T<:Real
+  cx = wall.center.x; cy=wall.center.y
+  val = abs(wall.radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
+  TOL = 1e-12
+  return (val < TOL ? true : false)
+end
+# note: s is input only to make all arguments for isInLine the same
+function is_in_line(wall::ArcWall{T},point::Point2D{T}) where T<:Real
+  cx = wall.nodes[2].x; cy=wall.nodes[2].y
+  radius = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
+  val = abs(radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
+
+  θ1 = atan(wall.nodes[1].y-cy,wall.nodes[1].x-cx) - pi/24
+  θ2 = atan(wall.nodes[3].y-cy,wall.nodes[3].x-cx) + pi/24
+  θs = atan(point.y-cy,point.x-cx)
+
+  TOL = 1e-12
+  isOn = false
+  if val < TOL
+      if θ1 > θ2
+          if θs > θ1 || θs < θ2
+              isOn = true
+          end
+      else
+          if θs > θ1 && θs < θ2
+              return true
+          end
+      end
+  end
+
+  return isOn
 end
