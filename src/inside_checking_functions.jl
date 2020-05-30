@@ -159,14 +159,12 @@ end
 function is_in_line(wall::LineWall{T},point::Point2D{T}) where T<:Real
   return on_segment(wall.nodes[1],point,wall.nodes[2])
 end
-# note: s is input only to make all arguments for isInLine the same
 function is_in_line(wall::CircleWall{T},point::Point2D{T}) where T<:Real
   cx = wall.center.x; cy=wall.center.y
   val = abs(wall.radius - sqrt((cx-point.x)^2 + (cy-point.y)^2))
   TOL = 1e-12
   return (val < TOL ? true : false)
 end
-# note: s is input only to make all arguments for isInLine the same
 function is_in_line(wall::ArcWall{T},point::Point2D{T}) where T<:Real
   cx = wall.nodes[2].x; cy=wall.nodes[2].y
   radius = sqrt((cx-wall.nodes[1].x)^2 + (cy-wall.nodes[1].y)^2)
@@ -191,4 +189,16 @@ function is_in_line(wall::ArcWall{T},point::Point2D{T}) where T<:Real
   end
 
   return isOn
+end
+
+# determines whether or not point is inside a rectangle
+# also includes being on bottom or left boundary
+function is_inside_rect(rect::Vector{T},point::P)  where {T<:Real,P<:AbstractPoint}
+  x0=rect[1]; x1=rect[2]; y0=rect[3]; y1=rect[4]
+
+  if point.x<=x1 && point.x>=x0 && point.y<=y1 && point.y>=y0
+    return true
+  else
+    return false
+  end
 end

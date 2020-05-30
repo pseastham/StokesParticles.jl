@@ -1,5 +1,5 @@
 using StokesParticles, Test
-import StokesParticles: isInsideRect, Particle2D, Point2D
+import StokesParticles: is_inside_rect, Particle2D, Point2D
 
 # test isInsideRect
 sampleRect    = [0.0, 0.6, -0.2, 0.4]
@@ -7,10 +7,10 @@ pointIn       = Point2D(0.1,0.3)
 pointOut      = Point2D(1.1,0.3)
 pointOnEdge   = Point2D(0.6,0.3)
 pointOnCorner = Point2D(0.6,0.4)
-@test isInsideRect(sampleRect,pointIn) == true
-@test isInsideRect(sampleRect,pointOut) == false
-@test isInsideRect(sampleRect,pointOnEdge) == true
-@test isInsideRect(sampleRect,pointOnCorner) == true
+@test is_inside_rect(sampleRect,pointIn) == true
+@test is_inside_rect(sampleRect,pointOut) == false
+@test is_inside_rect(sampleRect,pointOnEdge) == true
+@test is_inside_rect(sampleRect,pointOnCorner) == true
 
 # test generateCellList
 n_particles = 3

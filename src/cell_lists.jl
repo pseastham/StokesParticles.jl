@@ -148,18 +148,6 @@ function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where 
   nothing
 end
 
-# determines whether or not point is inside a rectangle
-# also includes being on bottom or left boundary
-function is_inside_rect(rect::Vector{T},point::P)  where {T<:Real,P<:AbstractPoint}
-  x0=rect[1]; x1=rect[2]; y0=rect[3]; y1=rect[4]
-
-  if point.x<=x1 && point.x>=x0 && point.y<=y1 && point.y>=y0
-    return true
-  else
-    return false
-  end
-end
-
 function getElementFromNode!(elementArray::Vector{Int},mesh::M,nodeInd::Int) where M#<:AbstractMesh
   nElm = length(mesh.cm)
 
