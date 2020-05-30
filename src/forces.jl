@@ -57,7 +57,6 @@ function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vec
         cfX[ti] += fx; cfY[ti] += fy
         cfX[tj] -= fx; cfY[tj] -= fy
     end
-
     nothing
 end
 
@@ -73,8 +72,8 @@ function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vecto
     for tp=1:length(particleList), tw=1:length(wallList)
         get_nearest_point!(pointOnWall,particleList[tp],wallList[tw])
         if is_in_line(wallList[tw],pointOnWall)
-            Δx = particleList[tp].pos.x - pointOnWall.x
-            Δy = particleList[tp].pos.y - pointOnWall.y
+            Δx = pointOnWall.x - particleList[tp].pos.x
+            Δy = pointOnWall.y - particleList[tp].pos.y
 
             d = particleList[tp].radius + wallList[tw].thickness/2
 
@@ -83,7 +82,14 @@ function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vecto
             afY[tp] += fy
         end
     end
+    nothing
+end
 
+function compute_gravity_force!(gfX,gfY,n_particles,G)
+    for ti=1:n_particles
+        gfX[ti] = 0.0
+        gfY[ti] = -G*ones(n_particles)
+    end
     nothing
 end
 

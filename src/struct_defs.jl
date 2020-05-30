@@ -103,26 +103,23 @@ mutable struct scratch_data
     polygon::Vector{Point2D{Float64}}
     extremePoint::Point2D{Float64}
     pointOnWall::Point2D{Float64}
-    xquad::Vector{Float64}
-    yquad::Vector{Float64}
     cfX::Vector{Float64}
     cfY::Vector{Float64}
     afX::Vector{Float64}
     afY::Vector{Float64}
+    gfX::Vector{Float64}
+    gfY::Vector{Float64}
 
-    function scratch_data(n_quad::Int,n_particles::Int)
+    function scratch_data(n_particles::Int)
         polygon      = [Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0),Point2D(0.0,0.0)]
         extremePoint = Point2D(100_000.0,0.0)
         pointOnWall  = Point2D(0.0,0.0)
-        xquad        = zeros(n_quad)
-        yquad        = zeros(n_quad)
         cfX          = zeros(n_particles)
         cfY          = zeros(n_particles)
         afX          = zeros(n_particles)
         afY          = zeros(n_particles)
-        return new(n_particles,polygon,extremePoint,pointOnWall,xquad,yquad,cfX,cfY,afX,afY)
-    end
-    function scratch_data(n_particles::Int)
-        return scratch_data(1,n_particles)
+        gfX          = zeros(n_particles)
+        gfY          = zeros(n_particles)
+        return new(n_particles,polygon,extremePoint,pointOnWall,cfX,cfY,afX,afY)
     end
 end 
