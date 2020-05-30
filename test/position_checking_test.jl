@@ -1,5 +1,5 @@
 using StokesParticles, Test
-import StokesParticles: do_intersect, get_orientation, is_point_in_wall, Particle2D, Point2D
+import StokesParticles: do_intersect, get_orientation, get_nearest_point!, is_in_line
 
 p1 = Point2D(0.0,0.0); q1 = Point2D(0.0,1.0)
 p2 = Point2D(-0.5,0.5); q2 = Point2D(0.5,0.5)
@@ -15,4 +15,27 @@ z = Point2D(0.5+Float64(pi),1.5+Float64(pi))
     @test get_orientation(z,p2,q1) == 0
     @test get_orientation(p1,q1,Point2D(1.0,0.0)) == 1
     @test get_orientation(p1,q1,Point2D(-1.0,0.0)) == 2
+end
+
+wall1 = LineWall(Point2D(0.0,0.0),Point2D(2.0,0.0),0.2)
+pointOnWall1 = Point2D(0.0,0.0)
+pointOnWall2 = Point2D(0.0,0.0)
+particle = Particle2D(Point2D(0.6,0.1),0.5,1)
+wall2 = LineWall(Point2D(0.0,0.0),Point2D(0.0,2.0),0.2)
+@testset "get_nearest_point! tests" begin
+    get_nearest_point!(pointOnWall1,particle,wall1)
+    @test pointOnWall1.x == 0.6
+    @test pointOnWall1.y == 0.0
+
+    get_nearest_point!(pointOnWall2,particle,wall2)
+    @test pointOnWall2.x == 0.0
+    @test pointOnWall2.y == 0.1
+end
+
+@testset "is_in_line tests" begin
+    @test is_in_line(wall1,pointOnWall1) == true
+    @test is_in_line(wall2,pointOnWall2) == true
+    @test is_in_line(wall2,particle.pos) == false
+    @test is_in_line(wall2,Point2D(0.0,2.1)) == false
+    @test is_in_line(wall2,Point2D(0.0,-0.1)) == false
 end
