@@ -20,4 +20,6 @@ export Point2D,
 
 export update_particles_nofluid!
 
+export scratch_data
+
 end # module
