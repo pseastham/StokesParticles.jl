@@ -120,6 +120,6 @@ mutable struct scratch_data
         afY          = zeros(n_particles)
         gfX          = zeros(n_particles)
         gfY          = zeros(n_particles)
-        return new(n_particles,polygon,extremePoint,pointOnWall,cfX,cfY,afX,afY)
+        return new(n_particles,polygon,extremePoint,pointOnWall,cfX,cfY,afX,afY,gfX,gfY)
     end
 end 

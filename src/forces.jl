@@ -88,7 +88,7 @@ end
 function compute_gravity_force!(gfX,gfY,n_particles,G)
     for ti=1:n_particles
         gfX[ti] = 0.0
-        gfY[ti] = -G*ones(n_particles)
+        gfY[ti] = -G
     end
     nothing
 end

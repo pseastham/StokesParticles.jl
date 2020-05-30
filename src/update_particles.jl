@@ -10,7 +10,7 @@ end
 
 # does not use cell lists
 function compute_particle_velocity_nofluids(pList,wList,param,data)
-    compute_gravity_force!(data.gfX,data.gfY,data.n_particles,data.G)
+    compute_gravity_force!(data.gfX,data.gfY,data.n_particles,param.G)
     computeCohesion_backup!(data.cfX,data.cfY,pList,param.sC,param.ϵ)
     computeAdhesionForce!(data.afX,data.afY,pList,wList,data.pointOnWall,param.sA,param.ϵ)
 
