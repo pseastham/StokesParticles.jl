@@ -17,7 +17,7 @@ n_particles = 3
 particleList1 = [Particle2D(Point2D(rand(),rand()),rand(),1) for i=1:n_particles]
 TotalBounds = [0.0,1.0,0.0,1.0]
 L = 0.1
-cl = StokesParticles.generateCellList(particleList1,TotalBounds,L)
+cl = generate_cell_list(particleList1,TotalBounds,L)
 sum = 0 
 for i=1:length(cl.cells)
   global sum += length(cl.cells[i].particleIDList)
@@ -29,9 +29,9 @@ n_particles = 1_000
 particleList2 = [Particle2D(Point2D(rand(),rand()),rand(),1) for i=1:n_particles]
 TotalBounds = [0.0,1.0,0.0,1.0]
 L = 0.1
-cl = generateCellList(particleList2,TotalBounds,L)
+cl = generate_cell_list(particleList2,TotalBounds,L)
 particleList3 = [Particle2D(Point2D(rand(),rand()),rand(),1) for i=1:n_particles]
-updateCellList!(cl,particleList3)
+update_cell_list!(cl,particleList3)
 sum = 0 
 for i=1:length(cl.cells)
   global sum += length(cl.cells[i].particleIDList)

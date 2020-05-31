@@ -11,11 +11,7 @@ L
 OUTPUT
 cl
 """
-function generateCellList(particleList::Vector{P},totalBounds::Vector{T},L::T) where {T<:Real,P<:AbstractParticle}
-  if !(P <: Particle2D)
-    error("cell lists aren't yet written to support 3D. Your points are of type $(P)")
-  end
-
+function generate_cell_list(particleList,totalBounds::Vector{T},L::T) where T<:Real
   X0=totalBounds[1]; X1=totalBounds[2]; Y0=totalBounds[3]; Y1=totalBounds[4]
   Nx = Int(ceil((X1 - X0)/L))
   Ny = Int(ceil((Y1 - Y0)/L))
@@ -68,7 +64,7 @@ end
 """
 
 """
-function updateCellList!(cl::CellList,particleList::Vector{Particle2D{T}}) where T<:Real
+function update_cell_list!(cl::CellList,particleList)
   X0=cl.bounds[1]; X1=cl.bounds[2]; Y0=cl.bounds[3]; Y1=cl.bounds[4]
   Nx = Int(ceil((X1 - X0)/cl.sideLength))
   Ny = Int(ceil((Y1 - Y0)/cl.sideLength))
@@ -99,7 +95,7 @@ updates cell list with assumption that most nodes are in same cell as before, or
 should be much faster, but isn't......
 
 DO NOT USE
-"""
+
 function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where T<:Real
   X0=cl.bounds[1]; X1=cl.bounds[2]; Y0=cl.bounds[3]; Y1=cl.bounds[4]
   Nx = Int(ceil((X1 - X0)/cl.sideLength))
@@ -147,6 +143,7 @@ function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where 
 
   nothing
 end
+"""
 
 function getElementFromNode!(elementArray::Vector{Int},mesh::M,nodeInd::Int) where M#<:AbstractMesh
   nElm = length(mesh.cm)

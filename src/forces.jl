@@ -41,7 +41,7 @@ extension, typically a small positive number.
 Note that this method is *slow* for large number of particles. It is O(N^2) where N is the number
 of particles (the length of nodeList). 
 """
-function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vector{P},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle}
+function compute_cohesion_force_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vector{P},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle}
     Nparticles = length(particleList)
 
     fill!(cfX,zero(T))
@@ -60,7 +60,7 @@ function computeCohesion_backup!(cfX::Vector{T},cfY::Vector{T},particleList::Vec
     nothing
 end
 
-function computeAdhesionForce!(afX::Vector{T},afY::Vector{T},particleList::Vector{P},wallList::Vector{W},pointOnWall::Point2D{T},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle,W<:AbstractWall}
+function compute_adhesion_force!(afX::Vector{T},afY::Vector{T},particleList::Vector{P},wallList::Vector{W},pointOnWall::Point2D{T},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle,W<:AbstractWall}
     if length(afX) != length(afY)
         throw(DimensionMismatch("length of afX and afY must match!"))
     end
@@ -93,13 +93,7 @@ function compute_gravity_force!(gfX,gfY,n_particles,G)
     nothing
 end
 
-"""
-# nodelist: list of points to compute force between
-# radiuslist: list of particle radii            (currently unused)
-# cfX: cohesion force in x-direction
-# cfY: cohesion force in y-direction
-function computeCohesion_CL!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Point2D{T}},radiusList::Vector{T},
-                                rc::T,ϵ::T,cl::CellList) where T<:Real
+function compute_cohesion_force_cl!(cfX::Vector{T},cfY::Vector{T},cl::CellList,pList::Vector{P},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle}
     # zero-out cohesion
     fill!(cfX,zero(T))
     fill!(cfY,zero(T))
@@ -107,34 +101,34 @@ function computeCohesion_CL!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Poin
     # go over cell lists
     for cellInd = 1:length(cl.cells)
         # compute cell-cell (same cell) forces
-        numNodes = length(cl.cells[cellInd].nodeList)
+        numNodes = length(cl.cells[cellInd].particleIDList)
         for ti=1:numNodes, tj=(ti+1):numNodes
-            nodeI = cl.cells[cellInd].nodeList[ti]
-            nodeJ = cl.cells[cellInd].nodeList[tj]
+            nodeI = cl.cells[cellInd].particleIDList[ti]
+            nodeJ = cl.cells[cellInd].particleIDList[tj]
 
-            Δx = nodeList[nodeJ].x - nodeList[nodeI].x
-            Δy = nodeList[nodeJ].y - nodeList[nodeI].y
+            Δx = pList[nodeJ].pos.x - pList[nodeI].pos.x
+            Δy = pList[nodeJ].pos.y - pList[nodeI].pos.y
     
-            d = radiusList[nodeI] + radiusList[nodeJ]
+            d = pList[nodeI].radius + pList[nodeJ].radius
     
-            fx,fy = ForceCalculation(ϵ,d,rc,Δx,Δy)
+            fx,fy = ForceCalculation(s,d,ϵ,Δx,Δy)
             cfX[nodeI] += fx; cfY[nodeI] += fy
             cfX[nodeJ] -= fx; cfY[nodeJ] -= fy
         end
 
         # compute cell-neighbor forces
         for ncInd in cl.cells[cellInd].neighborList
-            numNeighborNodes = length(cl.cells[ncInd].nodeList)
+            numNeighborNodes = length(cl.cells[ncInd].particleIDList)
             for ti=1:numNodes, tj=1:numNeighborNodes
-                nodeI = cl.cells[cellInd].nodeList[ti]
-                nodeJ = cl.cells[ncInd].nodeList[tj]
+                nodeI = cl.cells[cellInd].particleIDList[ti]
+                nodeJ = cl.cells[ncInd].particleIDList[tj]
 
-                Δx = nodeList[nodeJ].x - nodeList[nodeI].x
-                Δy = nodeList[nodeJ].y - nodeList[nodeI].y
+                Δx = pList[nodeJ].pos.x - pList[nodeI].pos.x
+                Δy = pList[nodeJ].pos.y - pList[nodeI].pos.y
         
-                d = radiusList[nodeI] + radiusList[nodeJ]
+                d = pList[nodeI].radius + pList[nodeJ].radius
         
-                fx,fy = ForceCalculation(ϵ,d,rc,Δx,Δy)
+                fx,fy = ForceCalculation(s,d,ϵ,Δx,Δy)
                 cfX[nodeI] += fx
                 cfY[nodeI] += fy
             end 
@@ -143,4 +137,3 @@ function computeCohesion_CL!(cfX::Vector{T},cfY::Vector{T},nodeList::Vector{Poin
 
     nothing
 end
-"""
