@@ -144,17 +144,3 @@ function updateCellList_SMART!(cl::CellList,nodeList::Vector{Point2D{T}}) where 
   nothing
 end
 """
-
-function getElementFromNode!(elementArray::Vector{Int},mesh::M,nodeInd::Int) where M#<:AbstractMesh
-  nElm = length(mesh.cm)
-
-  tk = 1
-  for elmInd=1:nElm
-    if nodeInd in mesh.cm[elmInd].NodeList
-      elementArray[tk] = elmInd
-      tk += 1
-    end
-  end
-
-  nothing
-end
