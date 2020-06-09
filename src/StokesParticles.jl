@@ -8,6 +8,7 @@ include("cell_lists.jl")
 include("fgt.jl")
 include("forces.jl")
 include("update_particles.jl")
+include("params.jl")
 
 export generate_cell_list,
        update_cell_list!
@@ -21,6 +22,7 @@ export Point2D,
 export update_particles_nofluid!,
        update_particles_nofluid_nocl!
 
-export scratch_data
+export scratch_data,
+       sp_params
 
 end # module
