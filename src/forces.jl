@@ -61,11 +61,6 @@ function compute_cohesion_force_backup!(cfX::Vector{T},cfY::Vector{T},particleLi
 end
 
 function compute_adhesion_force!(afX::Vector{T},afY::Vector{T},particleList::Vector{P},wallList::Vector{W},pointOnWall::Point2D{T},s::T,ϵ::T) where {T<:Real,P<:AbstractParticle,W<:AbstractWall}
-    if length(afX) != length(afY)
-        throw(DimensionMismatch("length of afX and afY must match!"))
-    end
-
-    # zero-out adhesion array
     fill!(afX,zero(T))
     fill!(afY,zero(T))
 
