@@ -69,11 +69,7 @@ function LineWall(nodes::Vector{Point2D{T}},thickness::T) where T<:Real
 end
 LineWall(n1,n2,thickness) = LineWall([n1,n2],thickness)
 
-function ArcWall(V::Vector{Vector{Float64}},thickness::Float64)
-    p1 = Point(V[1][1],V[1][2])
-    p2 = Point(V[2][1],V[2][2])
-    p3 = Point(V[3][1],V[3][2])
-
+function ArcWall(p1,p2,p3,thickness::Float64)
     r1 = sqrt((p2.x-p1.x)^2 + (p2.y-p1.y)^2)
     r2 = sqrt((p2.x-p3.x)^2 + (p2.y-p3.y)^2)
 
@@ -84,7 +80,6 @@ function ArcWall(V::Vector{Vector{Float64}},thickness::Float64)
 
     return ArcWall([p1,p2,p3],thickness)
 end
-ArcWall(v1,v2,v3,thickness) = ArcWall([v1,v2,v3],thickness)
 
 mutable struct Cell
     particleIDList::Vector{Int}     # list of indices of particles that are within cell

@@ -6,4 +6,5 @@ using SafeTestsets
     @time @safetestset "Cell List Tests" begin include("celllists_test.jl") end
     @time @safetestset "Check Position Tests" begin include("position_checking_test.jl") end
     @time @safetestset "Full Run Tests" begin include("full_run_test.jl") end
+    @time @safetestset "Struct Tests" begin include("struct_test.jl") end
 end
