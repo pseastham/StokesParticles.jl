@@ -20,8 +20,12 @@ end
 wall1 = LineWall(Point2D(0.0,0.0),Point2D(2.0,0.0),0.2)
 pointOnWall1 = Point2D(0.0,0.0)
 pointOnWall2 = Point2D(0.0,0.0)
+pointOnWallA = Point2D(0.1,0.1)
+pointOnWallC = Point2D(0.0,0.0)
 particle = Particle2D(Point2D(0.6,0.1),0.5,1)
 wall2 = LineWall(Point2D(0.0,0.0),Point2D(0.0,2.0),0.2)
+wallC = CircleWall(Point2D(0.0,0.0),1.0,0.2)
+wallA = ArcWall(Point2D(0.0,-1.0),Point2D(0.0,0.0),Point2D(0.0,1.0),0.2)
 @testset "get_nearest_point! tests" begin
     get_nearest_point!(pointOnWall1,particle,wall1)
     @test pointOnWall1.x == 0.6
@@ -34,19 +38,22 @@ wall2 = LineWall(Point2D(0.0,0.0),Point2D(0.0,2.0),0.2)
     pointOnWall3 = get_nearest_point(particle,wall2)
     @test pointOnWall3.x == 0.0
     @test pointOnWall3.y == 0.1
+
+    get_nearest_point!(pointOnWallA,particle,wallA)
+    get_nearest_point!(pointOnWallC,particle,wallC)
 end
 
-wallC = CircleWall(Point2D(0.0,0.0),1.0,0.2)
-wallA = ArcWall(Point2D(1.0,0.0),Point2D(0.0,0.0),Point2D(0.0,1.0),0.2)
 @testset "is_in_line tests" begin
     @test is_in_line(wall1,pointOnWall1) == true
     @test is_in_line(wall2,pointOnWall2) == true
     @test is_in_line(wall2,particle.pos) == false
     @test is_in_line(wall2,Point2D(0.0,2.1)) == false
     @test is_in_line(wall2,Point2D(0.0,-0.1)) == false
+    @test is_in_line(wallA,pointOnWallA) == true
+    @test is_in_line(wallC,pointOnWallC) == true
     @test is_in_line(wallA,Point2D(sqrt(2)/2,sqrt(2)/2)) == true
     @test is_in_line(wallA,Point2D(-sqrt(2)/2,sqrt(2)/2)) == false
-    @test is_in_line(wallA,Point2D(sqrt(2)/2,-sqrt(2)/2)) == false
+    @test is_in_line(wallA,Point2D(sqrt(2)/2,-sqrt(2)/2)) == true
     @test is_in_line(wallA,Point2D(-sqrt(2)/2,-sqrt(2)/2)) == false
     @test is_in_line(wallA,Point2D(0.0,-0.1)) == false
     @test is_in_line(wallC,Point2D(sqrt(2)/2,sqrt(2)/2)) == true

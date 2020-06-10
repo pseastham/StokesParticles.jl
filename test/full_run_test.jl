@@ -9,6 +9,6 @@ data = scratch_data(length(pList))
 update_particles_nofluid_nocl!(pList,wList,param,data)
 
 
-L = 0.1
+L = 0.5
 cl = generate_cell_list(pList,[-3.0,3.0,-3.0,3.0],L)
 update_particles_nofluid!(pList,wList,param,data,cl)
