@@ -1,38 +1,4 @@
 """
-  isInside(polygon, n, p)
-
-Returns true if the point p lies inside the polygon with n vertices
-"""
-function is_inside(polygon::Vector{Point2D{T}}, n::Int, p::Point2D{T}; extreme = Point2D(100000.0, p[2])) where T<:Real
-  # There must be at least 3 vertices in polygon
-  if (n < 3) return false end
-
-  # Count intersections of the above line with sides of polygon
-  count = 0
-  for i=1:n
-    next = mod(i,n)+1
-    # Check if the line segment from 'p' to 'extreme' intersects
-    # with the line segment from 'polygon[i]' to 'polygon[next]'
-    if (do_intersect(polygon[i], polygon[next], p, extreme))
-      # If the point 'p' is colinear with line segment 'i-next',
-      # then check if it lies on segment. If it lies, return true,
-      # otherwise false
-      if (get_orientation(polygon[i], p, polygon[next]) == 0)
-         return on_segment(polygon[i], p, polygon[next])
-      end
-      count += 1
-    end
-  end
-
-  # Return true if count is odd, false otherwise
-  if isodd(count)
-    return true
-  else
-    return false
-  end
-end
-
-"""
 do_intersect(p1,q1,p2,q2) -> bool
 
 Checks whether two lines, defined by (p1,q1) and (p2,q2) where pi,qi are 2-arrays.
@@ -42,20 +8,6 @@ Algorithm explained in https://www.geeksforgeeks.org/check-if-two-given-line-seg
 Note we have NOT implemented the special case for overlapping line segments, as that will never be the case in finite element applications
 """
 function do_intersect(p1::Point2D{T},q1::Point2D{T},p2::Point2D{T},q2::Point2D{T}) where T<:Real
-  # Find the four orientations needed for general case
-  o1 = get_orientation(p1, q1, p2)
-  o2 = get_orientation(p1, q1, q2)
-  o3 = get_orientation(p2, q2, p1)
-  o4 = get_orientation(p2, q2, q1)
-
-  # General case
-  if (o1 != o2 && o3 != o4)
-    return true
-  else
-    return false
-  end
-end
-function do_intersect(p1,q1,p2,q2)
   # Find the four orientations needed for general case
   o1 = get_orientation(p1, q1, p2)
   o2 = get_orientation(p1, q1, q2)
