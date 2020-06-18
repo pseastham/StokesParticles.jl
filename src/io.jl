@@ -256,7 +256,7 @@ function combine_circ(output_name,input_files...)
         elseif circ2_bool_arr[ti]
             tempradArr, tempxArr, tempyArr, tempMatIDArr = read_circ2(input_files[ti])
         end
-        n_particles = length(radArr)
+        n_particles = length(tempradArr)
         for tj=1:n_particles
             radiusArr[tk] = tempradArr[tj]
             xArr[tk] = tempxArr[tj]
