@@ -26,7 +26,7 @@ export update_particles_nofluid!,
 export scratch_data,
        sp_params
 
-export write_circ, read_circ2, 
+export write_circ, read_circ, 
        write_circ2, read_circ2,
        write_wall, read_wall,
        combine_circ
