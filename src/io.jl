@@ -246,7 +246,7 @@ function combine_circ(output_name,input_files...)
     radiusArr = zeros(n_particles)
     xArr      = zeros(n_particles)
     yArr      = zeros(n_particles)
-    matIDArr  = zeros(n_particles)
+    matIDArr  = zeros(Int,n_particles)
 
     # fill in arrays with 2nd pass through
     tk = 1
