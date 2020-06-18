@@ -9,6 +9,7 @@ include("fgt.jl")
 include("forces.jl")
 include("update_particles.jl")
 include("params.jl")
+include("io.jl")
 
 export generate_cell_list,
        update_cell_list!
@@ -24,5 +25,10 @@ export update_particles_nofluid!,
 
 export scratch_data,
        sp_params
+
+export write_circ, read_circ2, 
+       write_circ2, read_circ2,
+       write_wall, read_wall,
+       combine_circ
 
 end # module
