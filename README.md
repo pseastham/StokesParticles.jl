@@ -7,11 +7,10 @@
 
 ## Installation
 
-StokesParticles.jl is an unregistered package only available on Linux systems. To install StokesParticles.jl using the REPL, type the following two commands (in order):
+StokesParticles.jl is an unregistered package. To install StokesParticles.jl using the REPL, type the following two commands (in order):
 
 ```
-pkg> add https://github.com/pseastham/StokesParticlesBuilder
 pkg> add https://github.com/pseastham/StokesParticles.jl
 ```
 
-To enter the Pkg environment from the REPL, type `]`. The first `add` gives you access to the FIGTree linux_x86-64 binaries, whose source is available at [here](http://users.umiacs.umd.edu/~morariu/figtree/) (note: I am unaffiliated with that project, but appreciate their work).
+To enter the Pkg environment from the REPL, type `]`. The first `add` gives you access to the FIGTree binaries, whose source is available [here](http://users.umiacs.umd.edu/~morariu/figtree/) (note: I am unaffiliated with that project, but appreciate their work).
