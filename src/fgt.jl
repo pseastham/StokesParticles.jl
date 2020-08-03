@@ -7,7 +7,7 @@
 #   http://www.umiacs.umd.edu/~morariu/figtree/ 
 
 using Libdl
-const figtreeso = string("libfigtree.",dlext)
+const figtreeso = string(libfigtree)
 
 """
     fgt!(v,d,M,N,h,ε,x,y,q,W)
