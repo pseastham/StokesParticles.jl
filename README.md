@@ -7,7 +7,7 @@
 
 ## Installation
 
-StokesParticles.jl is an unregistered package. To install StokesParticles.jl using the REPL, type the following two commands (in order):
+StokesParticles.jl is an unregistered package. To install StokesParticles.jl using the REPL, type the following:
 
 ```
 pkg> add https://github.com/pseastham/StokesParticles.jl
