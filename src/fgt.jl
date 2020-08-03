@@ -6,9 +6,6 @@
 # and website that hosts code is 
 #   http://www.umiacs.umd.edu/~morariu/figtree/ 
 
-using Libdl
-const figtreeso = string(libfigtree)
-
 """
     fgt!(v,d,M,N,h,ε,x,y,q,W)
 
@@ -35,7 +32,7 @@ function fgt!(v::Array{Float64},d::Int,M::Int,N::Int,h::Float64,ε::Float64,
     fill!(v,zero(Float64))
 
     # call c function
-    ccall((:figtree,figtreeso), 
+    ccall((:figtree,"libfigtree"), 
             Int, 
             (Int, Int, Int, Int, Ptr{Float64}, Float64, Ptr{Float64}, Ptr{Float64}, Float64, Ptr{Float64}, Int, Int, Int, Int), 
             d, N, M, W, x, h, q, y, ε, v, 4, 1, 0, 0)       # 0 indicates direct evaluation, 4 is auto
@@ -52,7 +49,7 @@ function dgt!(v::Array{Float64},d::Int,M::Int,N::Int,h::Float64,ε::Float64,
     fill!(v,zero(Float64))
 
     # call c function
-    ccall((:figtree,figtreeso), 
+    ccall((:figtree,"libfigtree"), 
             Int, 
             (Int, Int, Int, Int, Ptr{Float64}, Float64, Ptr{Float64}, Ptr{Float64}, Float64, Ptr{Float64},Int, Int, Int, Int), 
             d, N, M, W, x, h, q, y, ε, v, 0, 0, 0, 0)    # 0 indicates direct evaluation, 4 is auto
